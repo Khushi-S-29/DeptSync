@@ -1,17 +1,17 @@
-CREATE DATABASE IF NOT EXISTS timetable_db;
-USE timetable_db;
+CREATE DATABASE IF NOT EXISTS testdb;
+USE testdb;
 
-CREATE TABLE departments (
+CREATE TABLE IF NOT EXISTS departments (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE rooms (
+CREATE TABLE IF NOT EXISTS rooms (
   id INT AUTO_INCREMENT PRIMARY KEY,
   room_name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(150) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE users (
   FOREIGN KEY (dept_id) REFERENCES departments(id)
 );
 
-CREATE TABLE timetable (
+CREATE TABLE IF NOT EXISTS timetable (
   id INT AUTO_INCREMENT PRIMARY KEY,
   room_id INT NOT NULL,
   day ENUM('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE timetable (
   CONSTRAINT check_slot_range CHECK (slot_number BETWEEN 1 AND 8)
 );
 
-CREATE TABLE timetable_audit (
+CREATE TABLE IF NOT EXISTS timetable_audit (
   id INT AUTO_INCREMENT PRIMARY KEY,
   timetable_id INT,
   edited_by INT,
