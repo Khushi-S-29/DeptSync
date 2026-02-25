@@ -17,14 +17,14 @@ exports.getRoomSlots = (req, res) => {
         message: "no slots found for this room",
       });
     }
-    const res = results.map((slot) => ({
+    const slots = results.map((slot) => ({
       ...slot,
       allotment_status: slot.subject ? "Allotted" : "Not Allotted",
       is_editable:
         user.role === "SUPER_ADMIN" ||
         (user.role === "DEPT_ADMIN" && user.dept_id === slot.dept_id),
     }));
-    res.json(res);
+    res.json(slots);
   });
 };
 
@@ -32,11 +32,11 @@ exports.getDepartmentTimetable = (req, res) => {
   const { deptId } = req.params;
   getTimetableByDepartment(deptId, (err, results) => {
     if (err) return res.status(500).json({ error: err });
-    const res = results.map((slot) => ({
+    const slots = results.map((slot) => ({
       ...slot,
       allotment_status: slot.subject ? "Allotted" : "Not Allotted",
     }));
-    res.json(res);
+    res.json(slots);
   });
 };
 
