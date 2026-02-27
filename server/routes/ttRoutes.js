@@ -10,8 +10,8 @@ const {
   createTimetableSlot,
 } = require("../controllers/ttController");
 
-router.get("/room/:roomId", verifyToken, getRoomSlots);
-router.get("/department/:deptId", verifyToken, getDepartmentTimetable);
+router.get("/room/:roomId", getRoomSlots);
+router.get("/department/:deptId", getDepartmentTimetable);
 router.put("/update", verifyToken, updateTimetable);
 router.post("/create_slot", verifyToken, createTimetableSlot);
 module.exports = router;

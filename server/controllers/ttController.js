@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const {
   getSlotsByRoom,
   getTimetableByDepartment,
@@ -9,7 +10,18 @@ const {
 
 exports.getRoomSlots = (req, res) => {
   const { roomId } = req.params;
-  const user = req.user;
+
+  let user = null;
+  const auth = req.headers.authorization;
+  if (auth) {
+    try {
+      let token = auth;
+      if (token.startsWith("Bearer ")) token = token.slice(7);
+      user = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (e) {
+    }
+  }
+
   getSlotsByRoom(roomId, (err, results) => {
     if (err) return res.status(500).json({ error: err });
     if (results.length === 0) {
@@ -20,9 +32,10 @@ exports.getRoomSlots = (req, res) => {
     const slots = results.map((slot) => ({
       ...slot,
       allotment_status: slot.subject ? "Allotted" : "Not Allotted",
-      is_editable:
-        user.role === "SUPER_ADMIN" ||
-        (user.role === "DEPT_ADMIN" && user.dept_id === slot.dept_id),
+      is_editable: user
+        ? user.role === "SUPER_ADMIN" ||
+          (user.role === "DEPT_ADMIN" && user.dept_id === slot.dept_id)
+        : false,
     }));
     res.json(slots);
   });
