@@ -28,6 +28,7 @@ exports.login = (req, res) => {
         email: user.email,
         role: user.role,
         dept_id: user.dept_id,
+        department_name: user.department_name,
       },
     });
   });
@@ -65,5 +66,22 @@ exports.getAllUsers = (req, res) => {
   db.query(`SELECT id, email, role, dept_id FROM users`, (err, results) => {
     if (err) return res.status(500).json(err);
     res.json(results);
+  });
+};
+
+exports.removeUser = (req, res) => {
+  const { id } = req.params;
+  const user = req.user;
+
+  if (user.role !== "SUPER_ADMIN") {
+    return res
+      .status(403)
+      .json({ message: "Only super admin can delete users" });
+  }
+
+  const query = "DELETE FROM users WHERE id = ?";
+  db.query(query, [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "User deleted successfully" });
   });
 };

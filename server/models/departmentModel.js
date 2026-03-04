@@ -11,3 +11,8 @@ exports.createDepartment = (name, callback) => {
 exports.getAllDepartments = (callback) => {
   db.query("SELECT * FROM departments", callback);
 };
+
+exports.deleteDepartment = (id, callback) => {
+  const query = "DELETE FROM departments WHERE id = ?";
+  db.query(query, [id], callback);
+};

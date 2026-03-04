@@ -1,4 +1,5 @@
-const { createRoom, getAllRooms } = require("../models/roomModel");
+const { createRoom, getAllRooms, deleteRoom } = require("../models/roomModel");
+const db = require("../config/db");
 
 exports.addRoom = (req, res) => {
   const user = req.user;
@@ -39,5 +40,25 @@ exports.getRooms = (req, res) => {
   getAllRooms((err, results) => {
     if (err) return res.status(500).json(err);
     res.json(results);
+  });
+};
+
+exports.removeRoom = (req, res) => {
+  const { id } = req.params;
+  const user = req.user;
+
+  if (user.role !== "SUPER_ADMIN") {
+    return res
+      .status(403)
+      .json({ message: "Only super admin can delete rooms" });
+  }
+
+  const query = "DELETE FROM rooms WHERE id = ?";
+  db.query(query, [id], (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json({
+      message:
+        "Room and all its associated timetable slots deleted successfully",
+    });
   });
 };
