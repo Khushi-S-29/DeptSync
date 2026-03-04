@@ -1,0 +1,218 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap");
+
+.rooms-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 60px 40px;
+  background: url("../nitkkr.jpg") no-repeat center center/cover fixed;
+  font-family: "Outfit", sans-serif;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.rooms-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 240, 246, 0.45);
+  z-index: 1;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 2;
+  opacity: 0.5;
+  background: linear-gradient(135deg, #ff85b3, #f43f5e);
+  animation: orbFloat 18s infinite alternate ease-in-out;
+}
+
+.orb-top-right {
+  width: 500px;
+  height: 500px;
+  top: -150px;
+  right: -150px;
+}
+.orb-bottom-left {
+  width: 400px;
+  height: 400px;
+  bottom: -100px;
+  left: -100px;
+  animation-delay: -9s;
+}
+
+@keyframes orbFloat {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(80px, 120px) scale(1.1);
+  }
+}
+
+.glass-canvas {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1000px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(25px) saturate(160%);
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 50px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+  animation: viewIn 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.glass-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #4a1d1f;
+  letter-spacing: -2px;
+}
+
+.glass-subtitle {
+  color: #8b5e66;
+  font-weight: 600;
+  margin-top: -5px;
+  margin-bottom: 35px;
+}
+
+.glass-form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 45px;
+}
+
+.input-group-sleek {
+  flex: 1;
+  position: relative;
+}
+
+.field-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff85b3;
+}
+
+.sleek-input-field {
+  width: 100%;
+  padding: 16px 16px 16px 48px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.sleek-input-field:focus {
+  outline: none;
+  background: white;
+  border-color: #ff85b3;
+  box-shadow: 0 0 0 5px rgba(255, 133, 179, 0.2);
+}
+
+.btn-pink-action {
+  padding: 0 35px;
+  background: linear-gradient(135deg, #ff85b3, #f43f5e);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-pink-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px rgba(244, 63, 94, 0.35);
+}
+
+.sleek-glass-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+}
+
+.sleek-glass-table th {
+  padding: 10px 25px;
+  text-align: left;
+  color: #8b5e66;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.sleek-row td {
+  padding: 22px 25px;
+  background: rgba(255, 255, 255, 0.55);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sleek-row td:first-child {
+  border-radius: 22px 0 0 22px;
+}
+.sleek-row td:last-child {
+  border-radius: 0 22px 22px 0;
+}
+
+.sleek-row:hover td {
+  background: white;
+  transform: scale(1.008);
+}
+
+.id-cell {
+  font-weight: 800;
+  color: #ff85b3;
+}
+.room-name-cell {
+  font-weight: 700;
+  color: #4a1d1f;
+  font-size: 1.1rem;
+}
+
+.status-badge-active {
+  background: #ecfdf5;
+  color: #10b981;
+  padding: 4px 14px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.btn-trash-sleek {
+  background: #fff0f6;
+  color: #f43f5e;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: 0.2s;
+  display: flex;
+}
+
+.btn-trash-sleek:hover {
+  background: #f43f5e;
+  color: white;
+  transform: rotate(8deg);
+}
+
+@keyframes viewIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

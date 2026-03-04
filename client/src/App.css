@@ -1,0 +1,190 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap");
+
+:root {
+  --primary-pink: #ff85b3;
+  --soft-pink: #ffcad4;
+  --deep-pink: #f43f5e;
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --text-main: #4a1d1f;
+  --text-muted: #8b5e66;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Outfit", sans-serif;
+  background: url("../nitkkr.jpg") no-repeat center center/cover fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 192, 203, 0.3),
+    rgba(244, 63, 94, 0.1)
+  );
+  z-index: -1;
+}
+
+.bg-orb {
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--soft-pink) 0%, transparent 70%);
+  filter: blur(80px);
+  z-index: -1;
+  animation: floatOrb 15s infinite alternate ease-in-out;
+}
+
+@keyframes floatOrb {
+  from {
+    transform: translate(-10%, -10%) scale(1);
+  }
+  to {
+    transform: translate(20%, 30%) scale(1.2);
+  }
+}
+
+.navbar {
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-link {
+  color: var(--text-main);
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: var(--primary-pink);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(255, 133, 179, 0.3);
+}
+
+.admin-container {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 40px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(25px);
+  border-radius: 30px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-form {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 40px;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 25px;
+  border-radius: 20px;
+}
+
+.admin-form input,
+.admin-form select {
+  padding: 12px 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: 15px;
+  background: white;
+  transition: all 0.3s;
+}
+
+.admin-form input:focus {
+  outline: none;
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 4px rgba(255, 133, 179, 0.2);
+  transform: scale(1.02);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.admin-table th {
+  padding: 15px;
+  color: var(--deep-pink);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--soft-pink);
+}
+
+.admin-table tr {
+  transition: transform 0.2s;
+}
+
+.admin-table td {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 18px;
+}
+
+.admin-table td:first-child {
+  border-radius: 15px 0 0 15px;
+}
+.admin-table td:last-child {
+  border-radius: 0 15px 15px 0;
+}
+
+.admin-table tr:hover td {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.admin-table tr:hover {
+  transform: scale(1.01);
+}
+.btn-delete {
+  background: #fff0f6;
+  color: #ff4d94;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-delete:hover {
+  background: #ff4d94;
+  color: white;
+  box-shadow: 0 5px 15px rgba(255, 77, 148, 0.3);
+}

@@ -1,0 +1,234 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap");
+
+.users-canvas {
+  position: relative;
+  min-height: 100vh;
+  padding: 60px 40px;
+  background: url("../nitkkr.jpg") no-repeat center center/cover fixed;
+  font-family: "Outfit", sans-serif;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.users-canvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 240, 246, 0.55);
+  z-index: 1;
+}
+
+.aesthetic-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 2;
+  opacity: 0.6;
+  background: linear-gradient(135deg, #ff85b3, #f43f5e);
+  animation: orbMovement 20s infinite alternate ease-in-out;
+}
+
+.orb-primary {
+  width: 450px;
+  height: 450px;
+  top: -100px;
+  left: -100px;
+}
+.orb-secondary {
+  width: 350px;
+  height: 350px;
+  bottom: -50px;
+  right: -50px;
+  animation-delay: -8s;
+}
+
+@keyframes orbMovement {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(100px, 80px) rotate(30deg);
+  }
+}
+
+.glass-panel {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1150px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(25px) saturate(160%);
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 50px;
+  box-shadow: 0 30px 60px rgba(244, 63, 94, 0.1);
+  animation: slideEntrance 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.panel-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #4a1d1f;
+  letter-spacing: -1.5px;
+}
+
+.panel-subtitle {
+  color: #8b5e66;
+  font-weight: 600;
+  margin-bottom: 35px;
+}
+
+.glass-action-bar {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 45px;
+  flex-wrap: wrap;
+}
+
+.input-cluster {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+}
+
+.glass-field {
+  flex: 1;
+  padding: 16px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  color: #4a1d1f;
+  transition: 0.3s;
+}
+
+.select-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.select-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff85b3;
+  pointer-events: none;
+}
+
+.glass-field:focus {
+  outline: none;
+  background: white;
+  border-color: #ff85b3;
+  box-shadow: 0 0 0 5px rgba(255, 133, 179, 0.2);
+}
+
+.btn-pink-gradient {
+  padding: 0 35px;
+  background: linear-gradient(135deg, #ff85b3, #f43f5e);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-pink-gradient:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(244, 63, 94, 0.3);
+}
+
+.glass-data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+.glass-data-table th {
+  padding: 10px 25px;
+  text-align: left;
+  color: #8b5e66;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.glass-data-row td {
+  padding: 24px 25px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.glass-data-row td:first-child {
+  border-radius: 25px 0 0 25px;
+}
+.glass-data-row td:last-child {
+  border-radius: 0 25px 25px 0;
+}
+
+.glass-data-row:hover td {
+  background: white;
+  transform: scale(1.01);
+}
+
+.id-tag {
+  font-weight: 800;
+  color: #ff85b3;
+  margin-right: 12px;
+}
+
+.email-text {
+  font-weight: 600;
+  color: #4a1d1f;
+}
+
+.badge-role {
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.badge-role.SUPER_ADMIN {
+  background: #fee2e2;
+  color: #ef4444;
+}
+.badge-role.DEPT_ADMIN {
+  background: #eef2ff;
+  color: #6366f1;
+}
+
+.btn-icon-delete {
+  background: #fff0f6;
+  color: #f43f5e;
+  border: none;
+  padding: 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 1.1rem;
+  display: flex;
+}
+
+.btn-icon-delete:hover {
+  background: #f43f5e;
+  color: white;
+  transform: rotate(10deg);
+}
+
+@keyframes slideEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
