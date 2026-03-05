@@ -12,6 +12,7 @@ import {
   FiLayers,
   FiLock,
   FiBox,
+  FiClock,
 } from "react-icons/fi";
 import "../styles/timetable.css";
 
@@ -34,12 +35,13 @@ const PERIOD_DATA = [
   { num: 8, time: "04:00 - 05:00" },
 ];
 
-const TimetableGrid = () => {
+const Timetable = () => {
   const { user } = useContext(AuthContext);
   const [roomId, setRoomId] = useState("");
   const [rooms, setRooms] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [gridData, setGridData] = useState({});
+  const [pendingRequests, setPendingRequests] = useState({});
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ subject: "", dept_id: "" });
 
@@ -55,7 +57,7 @@ const TimetableGrid = () => {
         setRooms(rRes.data);
         if (isSuper) setDepartments(dRes.data);
       } catch (err) {
-        console.error("Initialization Error:", err);
+        console.error(err);
       }
     };
     loadInitialData();
@@ -64,46 +66,81 @@ const TimetableGrid = () => {
   const fetchGrid = async (id) => {
     if (!id) return;
     try {
-      const res = await api.get(`/timetable/room/${id}`);
-      const map = {};
-      res.data.forEach((slot) => {
-        map[`${slot.day}-${slot.slot_number}`] = slot;
-      });
-      setGridData(map);
+      const [gridRes, reqRes] = await Promise.all([
+        api.get(`/timetable/room/${id}`),
+        api.get(`/timetable/requests/room/${id}`),
+      ]);
+
+      const gridMap = {};
+      gridRes.data.forEach((s) => (gridMap[`${s.day}-${s.slot_number}`] = s));
+      setGridData(gridMap);
+
+      const reqMap = {};
+      if (!isSuper) {
+        reqRes.data.forEach((r) => {
+          if (r.dept_id === user.dept_id) {
+            reqMap[`${r.day}-${r.slot_number}`] = r;
+          }
+        });
+      }
+
+      setPendingRequests(reqMap);
     } catch {
       setGridData({});
+      setPendingRequests({});
     }
   };
+  const handleCellClick = (day, period, slot, isPending) => {
+    if (isPending && !isSuper) return;
 
-  const handleCellClick = (day, period, slot) => {
-    const canEdit = isSuper || (slot && slot.dept_id === user.dept_id);
-    if (!canEdit) return;
+    const isOwner = slot && slot.dept_id === user.dept_id;
+    const isVacant = !slot;
+    const canInteract = isSuper || isOwner || isVacant;
+
+    if (!canInteract) return;
+
     setEditing({ day, period });
-    setForm({ subject: slot?.subject || "", dept_id: slot?.dept_id || "" });
+    setForm({
+      subject: slot?.subject || "",
+      dept_id: slot?.dept_id || user.dept_id,
+    });
   };
 
-  const saveSlot = async () => {
+  const saveAction = async () => {
     try {
-      const existing = gridData[`${editing.day}-${editing.period}`];
-      if (existing) {
-        await api.put("/timetable/update", {
-          id: existing.id,
-          subject: form.subject || "",
-        });
-      } else if (isSuper) {
-        if (!form.dept_id) return alert("Assign a department.");
-        await api.post("/timetable/create_slot", {
+      const slotKey = `${editing.day}-${editing.period}`;
+      const existing = gridData[slotKey];
+
+      if (isSuper || (existing && existing.dept_id === user.dept_id)) {
+        if (existing) {
+          await api.put("/timetable/update", {
+            id: existing.id,
+            subject: form.subject,
+          });
+        } else {
+          await api.post("/timetable/create_slot", {
+            room_id: Number(roomId),
+            day: editing.day,
+            slot_number: Number(editing.period),
+            dept_id: Number(form.dept_id),
+            subject: form.subject,
+          });
+        }
+      } else if (!existing && !isSuper) {
+        await api.post("/timetable/requests", {
           room_id: Number(roomId),
           day: editing.day,
           slot_number: Number(editing.period),
-          dept_id: Number(form.dept_id),
-          subject: form.subject || "",
+          dept_id: user.dept_id,
+          subject: form.subject,
         });
+        alert("Request submitted for approval!");
       }
+
       setEditing(null);
       fetchGrid(roomId);
     } catch (err) {
-      alert("Error saving slot.");
+      alert("Action failed. Slot might be occupied.");
     }
   };
 
@@ -186,20 +223,30 @@ const TimetableGrid = () => {
                   <div className="tt-cell day-side-label">{day}</div>
                   {PERIOD_DATA.map((p) => {
                     const slot = gridData[`${day}-${p.num}`];
+                    const rawPending = pendingRequests[`${day}-${p.num}`];
+
+                    const pending = !slot ? rawPending : null;
+
                     const isEditing =
                       editing?.day === day && editing?.period === p.num;
-                    const canEdit =
-                      isSuper || (slot && slot.dept_id === user.dept_id);
+                    const isOwner = slot && slot.dept_id === user.dept_id;
+                    const canEdit = isSuper || isOwner || (!slot && !isSuper);
 
                     return (
                       <div
                         key={p.num}
-                        className={`tt-cell slot-cell ${slot ? "filled" : "vacant"} ${canEdit ? "active" : "locked"}`}
+                        className={`tt-cell slot-cell ${slot ? "filled" : pending ? "pending" : "vacant"} ${canEdit && !pending ? "active" : "locked"}`}
                         onClick={() =>
-                          !isEditing && handleCellClick(day, p.num, slot)
+                          !isEditing &&
+                          handleCellClick(day, p.num, slot, !!pending)
                         }
                       >
-                        {!canEdit && slot && (
+                        {pending && (
+                          <div className="pending-tag">
+                            <FiClock /> Pending
+                          </div>
+                        )}
+                        {!canEdit && slot && !pending && (
                           <FiLock className="cell-lock-icon" />
                         )}
 
@@ -216,7 +263,7 @@ const TimetableGrid = () => {
                                   setForm({ ...form, dept_id: e.target.value })
                                 }
                               >
-                                <option value="">Dept</option>
+                                <option value="">Select Dept</option>
                                 {departments.map((d) => (
                                   <option key={d.id} value={d.id}>
                                     {d.name}
@@ -236,9 +283,9 @@ const TimetableGrid = () => {
                             <div className="editor-btns">
                               <button
                                 className="btn-save-mini"
-                                onClick={saveSlot}
+                                onClick={saveAction}
                               >
-                                Save
+                                {isSuper || isOwner ? "Save" : "Request"}
                               </button>
                               <button
                                 className="btn-x-mini"
@@ -250,15 +297,20 @@ const TimetableGrid = () => {
                           </div>
                         ) : (
                           <div className="slot-inner">
-                            {slot && (
+                            {(slot || pending) && (
                               <span className="dept-mini-tag">
-                                <FiLayers /> {slot.department_name}
+                                <FiLayers />{" "}
+                                {slot?.department_name || pending?.dept_name}
                               </span>
                             )}
                             <h4 className="subject-text">
-                              {slot?.subject || (canEdit ? "—" : "")}
+                              {slot?.subject ||
+                                pending?.subject ||
+                                (canEdit ? "—" : "")}
                             </h4>
-                            {canEdit && <FiEdit3 className="cell-edit-hint" />}
+                            {canEdit && !pending && (
+                              <FiEdit3 className="cell-edit-hint" />
+                            )}
                           </div>
                         )}
                       </div>
@@ -274,4 +326,4 @@ const TimetableGrid = () => {
   );
 };
 
-export default TimetableGrid;
+export default Timetable;

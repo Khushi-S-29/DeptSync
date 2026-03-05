@@ -57,3 +57,16 @@ CREATE TABLE IF NOT EXISTS timetable_audit (
     FOREIGN KEY (edited_by) REFERENCES users(id) 
     ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS slot_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_id INT NOT NULL,
+    dept_id INT NOT NULL,
+    day VARCHAR(20) NOT NULL,
+    slot_number INT NOT NULL,
+    subject VARCHAR(255),
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
+    FOREIGN KEY (dept_id) REFERENCES departments(id) ON DELETE CASCADE
+);

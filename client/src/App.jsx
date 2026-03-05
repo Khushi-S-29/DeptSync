@@ -6,8 +6,9 @@ import Dashboard from "./pages/Dashboard";
 import Rooms from "./pages/Rooms";
 import Departments from "./pages/Departments";
 import Users from "./pages/Users";
-import Slots from "./pages/Slots";
+import Requests from "./pages/Requests";
 import Timetable from "./pages/Timetable";
+
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -31,6 +32,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Rooms />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/requests"
+            element={
+              <ProtectedRoute>
+                <Requests />
               </ProtectedRoute>
             }
           />
