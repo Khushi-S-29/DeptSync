@@ -27,7 +27,7 @@ exports.createRequest = async (req, res) => {
 
 exports.updateRequestStatus = async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body; 
+  const { status } = req.body;
 
   try {
     if (status === "APPROVED") {
@@ -37,13 +37,21 @@ exports.updateRequestStatus = async (req, res) => {
       if (request.length === 0)
         return res.status(404).json({ message: "Request not found" });
       const r = request[0];
-      await db
-        .promise()
-        .query(
-          "INSERT INTO timetable (room_id, day, slot_number, dept_id, subject) VALUES (?, ?, ?, ?, ?)",
-          [r.room_id, r.day, r.slot_number, r.dept_id, r.subject],
-        );
-
+      await db.promise().query(
+        `INSERT INTO timetable (room_id, day, slot_number, dept_id, subject, subject_code, branch, section, teacher) 
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          r.room_id,
+          r.day,
+          r.slot_number,
+          r.dept_id,
+          r.subject,
+          r.subject_code,
+          r.branch,
+          r.section,
+          r.teacher,
+        ],
+      );
       await db.promise().query(
         `UPDATE slot_requests 
          SET status = 'REJECTED' 
@@ -60,7 +68,7 @@ exports.updateRequestStatus = async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
-}; 
+};
 exports.getPendingRequests = async (req, res) => {
   try {
     const [rows] = await db.promise().query(`

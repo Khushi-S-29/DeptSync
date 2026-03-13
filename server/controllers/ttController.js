@@ -18,8 +18,7 @@ exports.getRoomSlots = (req, res) => {
       let token = auth;
       if (token.startsWith("Bearer ")) token = token.slice(7);
       user = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   getSlotsByRoom(roomId, (err, results) => {
@@ -54,64 +53,28 @@ exports.getDepartmentTimetable = (req, res) => {
 };
 
 exports.updateTimetable = (req, res) => {
-  const { id, subject } = req.body;
+  const { id, subject, subject_code, branch, section, teacher } = req.body;
   const user = req.user;
+
   getSlotById(id, (err, results) => {
     if (err) return res.status(500).json({ error: err });
-    if (results.length === 0) {
-      insertAuditLog(
-        {
-          timetable_id: id,
-          edited_by: user.id,
-          old_subject: null,
-          new_subject: subject,
-          status: "FAILED",
-          reason: "slot not found",
-        },
-        () => {},
-      );
+    if (results.length === 0)
       return res.status(404).json({ message: "slot not found" });
-    }
+
     const slot = results[0];
-    if (
-      user.role !== "SUPER_ADMIN" &&
-      !(user.role === "DEPT_ADMIN" && user.dept_id === slot.dept_id)
-    ) {
-      insertAuditLog(
-        {
-          timetable_id: id,
-          edited_by: user.id,
-          old_subject: slot.subject,
-          new_subject: subject,
-          status: "FAILED",
-          reason: "unauthorized attempt",
-        },
-        () => {},
-      );
-      return res.status(403).json({
-        message: "unauthorized: cannot edit this slot",
-      });
+
+    const isSuper = user.role === "SUPER_ADMIN";
+    const isOwner = user.role === "DEPT_ADMIN" && user.dept_id === slot.dept_id;
+
+    if (!isSuper && !isOwner) {
+      return res.status(403).json({ message: "Unauthorized" });
     }
 
-    const oldSubject = slot.subject;
+    const updateData = { subject, subject_code, branch, section, teacher };
 
-    updateSubject(id, subject, (err) => {
+    updateSubject(id, updateData, (err) => {
       if (err) return res.status(500).json({ error: err });
-
-      insertAuditLog(
-        {
-          timetable_id: id,
-          edited_by: user.id,
-          old_subject: oldSubject,
-          new_subject: subject,
-          status: "SUCCESS",
-          reason: null,
-        },
-        (err) => {
-          if (err) return res.status(500).json({ error: err });
-          res.json({ message: "updated successfully" });
-        },
-      );
+      res.json({ message: "Updated successfully" });
     });
   });
 };
@@ -119,22 +82,16 @@ exports.updateTimetable = (req, res) => {
 exports.createTimetableSlot = (req, res) => {
   const user = req.user;
   if (user.role !== "SUPER_ADMIN") {
-    return res.status(403).json({
-      message: "only super admin can create slots",
-    });
+    return res.status(403).json({ message: "Only super admin can create slots" });
   }
-  const { room_id, day, slot_number, dept_id, subject } = req.body;
-  createSlot({ room_id, day, slot_number, dept_id, subject }, (err) => {
+
+  const { room_id, day, slot_number, dept_id, subject, subject_code, branch, section, teacher } = req.body;
+
+  createSlot({ room_id, day, slot_number, dept_id, subject, subject_code, branch, section, teacher }, (err) => {
     if (err) {
-      if (err.code === "ER_DUP_ENTRY") {
-        return res.status(400).json({
-          message: "slot already exists for this room, day, and slot number",
-        });
-      }
+      if (err.code === "ER_DUP_ENTRY") return res.status(400).json({ message: "Slot already occupied" });
       return res.status(500).json(err);
     }
-    res.json({
-      message: "slot created successfully",
-    });
+    res.json({ message: "Slot created successfully" });
   });
 };
